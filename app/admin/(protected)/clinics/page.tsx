@@ -23,13 +23,15 @@ export default async function AdminClinicsPage() {
 
   let clinics: ClinicPartner[] = [];
   let fetchError = false;
+  let unauthorized = false;
   try {
     const res = await fetch(`${BACKEND_URL}/admin/clinic-partners`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     });
-    if (res.status === 401) redirect("/admin/login");
-    if (res.ok) {
+    if (res.status === 401) {
+      unauthorized = true;
+    } else if (res.ok) {
       clinics = await res.json();
     } else {
       fetchError = true;
@@ -37,6 +39,9 @@ export default async function AdminClinicsPage() {
   } catch {
     fetchError = true;
   }
+  // redirect() throws — it must run OUTSIDE the try/catch or the catch
+  // swallows it and the page shows a fetch error instead of the login page.
+  if (unauthorized) redirect("/admin/login");
 
   return (
     <main className="max-w-7xl mx-auto px-6 py-8 md:py-10">

@@ -11,6 +11,7 @@ const BACKEND_URL =
 async function PromosContent({ token }: { token: string }) {
   let promos: Promo[] = [];
   let fetchError = false;
+  let unauthorized = false;
 
   try {
     const res = await fetch(`${BACKEND_URL}/admin/promos`, {
@@ -20,13 +21,17 @@ async function PromosContent({ token }: { token: string }) {
     if (res.ok) {
       promos = await res.json();
     } else if (res.status === 401) {
-      redirect("/admin/login");
+      unauthorized = true;
     } else {
       fetchError = true;
     }
   } catch {
     fetchError = true;
   }
+
+  // redirect() throws — it must run OUTSIDE the try/catch or the catch
+  // swallows it and the page shows a fetch error instead of the login page.
+  if (unauthorized) redirect("/admin/login");
 
   return <PromosTable promos={promos} fetchError={fetchError} />;
 }

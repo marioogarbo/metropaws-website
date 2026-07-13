@@ -36,15 +36,15 @@ export interface Plan {
 async function PlansContent({ token }: { token: string }) {
   let plans: Plan[] = [];
   let fetchError = false;
+  let unauthorized = false;
   try {
     const plansRes = await fetch(`${BACKEND_URL}/admin/plans`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     });
     if (plansRes.status === 401) {
-      redirect("/admin/login");
-    }
-    if (plansRes.ok) {
+      unauthorized = true;
+    } else if (plansRes.ok) {
       plans = await plansRes.json();
     } else {
       fetchError = true;
@@ -52,6 +52,10 @@ async function PlansContent({ token }: { token: string }) {
   } catch {
     fetchError = true;
   }
+
+  // redirect() throws — it must run OUTSIDE the try/catch or the catch
+  // swallows it and the page shows "Could not load plans" instead of login.
+  if (unauthorized) redirect("/admin/login");
 
   return <PlansTable plans={plans} fetchError={fetchError} />;
 }

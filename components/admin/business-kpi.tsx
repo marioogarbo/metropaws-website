@@ -143,6 +143,7 @@ export function BusinessKpi({ kpis }: { kpis: BusinessKpis }) {
           sub={`${kpis.revenue.paid_payments} paid`}
           icon={<Wallet size={14} />}
           accent
+          href="/admin/payments"
           delay={0}
         />
         <KpiTile
