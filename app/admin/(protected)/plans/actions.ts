@@ -26,18 +26,22 @@ function parseNonNegativeInt(raw: string): number | null {
 const MAX_WALLET_CENTAVOS = 100_000_000; // ₱1,000,000
 
 /**
- * Parse the admin-typed Benefit Wallet amount (pesos; may contain commas /
- * decimals) into integer centavos. Empty string means ₱0 (no wallet).
+ * Parse an admin-typed wallet amount (pesos; may contain commas / decimals)
+ * into integer centavos. Empty string means ₱0 (no wallet). `label` names the
+ * pool in error messages (e.g. "Preventive Wellness Wallet").
  */
-function parseWalletCentavos(raw: string): number | { error: string } {
+function parseWalletCentavos(
+  raw: string,
+  label = "Benefit Wallet",
+): number | { error: string } {
   const pesoStr = String(raw ?? "").replace(/[,\s]/g, "");
   const pesos = pesoStr === "" ? 0 : Number(pesoStr);
   if (!Number.isFinite(pesos) || pesos < 0) {
-    return { error: "The Benefit Wallet must be an amount of ₱0 or greater." };
+    return { error: `The ${label} must be an amount of ₱0 or greater.` };
   }
   const centavos = Math.round(pesos * 100);
   if (centavos > MAX_WALLET_CENTAVOS) {
-    return { error: "The Benefit Wallet exceeds the ₱1,000,000 maximum." };
+    return { error: `The ${label} exceeds the ₱1,000,000 maximum.` };
   }
   return centavos;
 }
@@ -90,8 +94,17 @@ export async function createPlanAction(
   const featuresResult = parseFeatures(formData.get("features") as string);
   if ("error" in featuresResult) return { error: featuresResult.error };
 
-  const walletResult = parseWalletCentavos(formData.get("reimbursement_wallet") as string);
+  const walletResult = parseWalletCentavos(
+    formData.get("reimbursement_wallet") as string,
+    "Preventive Wellness Wallet",
+  );
   if (typeof walletResult !== "number") return { error: walletResult.error };
+
+  const emergencyResult = parseWalletCentavos(
+    formData.get("emergency_wallet") as string,
+    "Emergency Wallet",
+  );
+  if (typeof emergencyResult !== "number") return { error: emergencyResult.error };
 
   const sortOrderRaw = (formData.get("sort_order") as string) || "0";
   const sortOrder = parseNonNegativeInt(sortOrderRaw) ?? 0;
@@ -106,6 +119,7 @@ export async function createPlanAction(
     is_active: formData.get("is_active") === "true",
     sort_order: sortOrder,
     reimbursement_wallet_centavos: walletResult,
+    emergency_wallet_centavos: emergencyResult,
   };
 
   const res = await safeFetch(`${BACKEND_URL}/admin/plans`, {
@@ -149,8 +163,17 @@ export async function updatePlanAction(
   const featuresResult = parseFeatures(formData.get("features") as string);
   if ("error" in featuresResult) return { error: featuresResult.error };
 
-  const walletResult = parseWalletCentavos(formData.get("reimbursement_wallet") as string);
+  const walletResult = parseWalletCentavos(
+    formData.get("reimbursement_wallet") as string,
+    "Preventive Wellness Wallet",
+  );
   if (typeof walletResult !== "number") return { error: walletResult.error };
+
+  const emergencyResult = parseWalletCentavos(
+    formData.get("emergency_wallet") as string,
+    "Emergency Wallet",
+  );
+  if (typeof emergencyResult !== "number") return { error: emergencyResult.error };
 
   const sortOrderRaw = (formData.get("sort_order") as string) || "0";
   const sortOrder = parseNonNegativeInt(sortOrderRaw) ?? 0;
@@ -165,6 +188,7 @@ export async function updatePlanAction(
     is_active: formData.get("is_active") === "true",
     sort_order: sortOrder,
     reimbursement_wallet_centavos: walletResult,
+    emergency_wallet_centavos: emergencyResult,
   };
 
   const res = await safeFetch(`${BACKEND_URL}/admin/plans/${planId}`, {

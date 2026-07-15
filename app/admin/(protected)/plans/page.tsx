@@ -28,8 +28,10 @@ export interface Plan {
   is_featured: boolean;
   is_active: boolean;
   sort_order: number;
-  // Annual Benefit Wallet in centavos — the ONE shared reimbursement pool.
+  // Two annual reimbursement pools in centavos. Preventive Wellness funds all
+  // non-emergency claims; Emergency funds "Emergency"-category claims.
   reimbursement_wallet_centavos: number;
+  emergency_wallet_centavos: number;
   plan_services: PlanService[];
 }
 

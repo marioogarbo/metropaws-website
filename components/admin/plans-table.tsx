@@ -8,6 +8,7 @@ import {
   useEffect,
   useCallback,
   useId,
+  type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2, X, Star, CheckCircle, XCircle, RefreshCw } from "lucide-react";
@@ -358,10 +359,16 @@ function centavosToPesoInput(centavos: number): string {
 }
 
 function WalletInput({
+  label,
+  hint,
+  ariaLabel,
   value,
   onChange,
   disabled,
 }: {
+  label: string;
+  hint: ReactNode;
+  ariaLabel: string;
   value: string;
   onChange: (v: string) => void;
   disabled?: boolean;
@@ -369,14 +376,10 @@ function WalletInput({
   return (
     <div className="space-y-2">
       <p className="text-[oklch(0.48_0.02_258)] text-xs font-semibold">
-        Benefit Wallet (per year)
+        {label}
       </p>
       <p className="text-[oklch(0.72_0.01_258)] text-[0.625rem] leading-relaxed">
-        ONE shared reimbursement pool per pet on this plan. Every claim — consult,
-        vaccine, grooming, emergency — draws from this same amount. Grooming is
-        additionally limited to once every 90 days per pet. Set{" "}
-        <span className="font-semibold">₱0</span> to disable reimbursements for
-        this plan.
+        {hint}
       </p>
       <div className="relative w-40">
         <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[oklch(0.72_0.01_258)]">
@@ -385,7 +388,7 @@ function WalletInput({
         <input
           type="text"
           inputMode="decimal"
-          aria-label="Benefit Wallet in pesos per year"
+          aria-label={ariaLabel}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="0"
@@ -432,6 +435,9 @@ function PlanFormDialog({
   const [wallet, setWallet] = useState(
     centavosToPesoInput(plan?.reimbursement_wallet_centavos ?? 0),
   );
+  const [emergency, setEmergency] = useState(
+    centavosToPesoInput(plan?.emergency_wallet_centavos ?? 0),
+  );
 
   const prevPending = useRef(false);
 
@@ -457,6 +463,7 @@ function PlanFormDialog({
           <input type="hidden" name="is_active" value={isActive ? "true" : "false"} />
           <input type="hidden" name="features" value={JSON.stringify(features)} />
           <input type="hidden" name="reimbursement_wallet" value={wallet} />
+          <input type="hidden" name="emergency_wallet" value={emergency} />
 
           {/* Visually freeze form body while action is in flight */}
           <div className={cn("space-y-4 transition-opacity duration-150", pending && "opacity-60 pointer-events-none")}>
@@ -540,8 +547,38 @@ function PlanFormDialog({
             </div>
 
             <div className="pt-1 border-t border-[oklch(0.92_0.010_258)] mt-1">
-              <div className="pt-3">
-                <WalletInput value={wallet} onChange={setWallet} disabled={pending} />
+              <div className="pt-3 space-y-4">
+                <WalletInput
+                  label="Preventive Wellness Wallet (per year)"
+                  ariaLabel="Preventive Wellness Wallet in pesos per year"
+                  hint={
+                    <>
+                      Funds all non-emergency claims — consult, vaccine, grooming
+                      — for each pet on this plan. Grooming is additionally limited
+                      to once every 90 days per pet. Set{" "}
+                      <span className="font-semibold">₱0</span> to disable
+                      preventive reimbursements for this plan.
+                    </>
+                  }
+                  value={wallet}
+                  onChange={setWallet}
+                  disabled={pending}
+                />
+                <WalletInput
+                  label="Emergency Wallet (per year)"
+                  ariaLabel="Emergency Wallet in pesos per year"
+                  hint={
+                    <>
+                      A separate pool that funds claims filed under the{" "}
+                      <span className="font-semibold">Emergency</span> category.
+                      Set <span className="font-semibold">₱0</span> if this plan
+                      has no emergency cover.
+                    </>
+                  }
+                  value={emergency}
+                  onChange={setEmergency}
+                  disabled={pending}
+                />
               </div>
             </div>
           </div>
@@ -796,15 +833,15 @@ function PlanCard({
         )}
       </div>
 
-      {/* Benefit Wallet */}
-      <div className="mx-5 mb-4">
+      {/* Benefit Wallets — two pools */}
+      <div className="mx-5 mb-4 space-y-0.5">
         <p
           className={cn(
             "text-xs",
             isFeatured ? "text-white/60" : "text-[oklch(0.48_0.02_258)]",
           )}
         >
-          Benefit Wallet:{" "}
+          Preventive Wallet:{" "}
           <span
             className={cn(
               "font-semibold tabular-nums",
@@ -813,6 +850,24 @@ function PlanCard({
           >
             {(plan.reimbursement_wallet_centavos ?? 0) > 0
               ? `${formatPHP(plan.reimbursement_wallet_centavos / 100)} / year`
+              : "None"}
+          </span>
+        </p>
+        <p
+          className={cn(
+            "text-xs",
+            isFeatured ? "text-white/60" : "text-[oklch(0.48_0.02_258)]",
+          )}
+        >
+          Emergency Wallet:{" "}
+          <span
+            className={cn(
+              "font-semibold tabular-nums",
+              isFeatured ? "text-[oklch(0.72_0.115_82)]" : "text-[oklch(0.24_0.055_258)]",
+            )}
+          >
+            {(plan.emergency_wallet_centavos ?? 0) > 0
+              ? `${formatPHP(plan.emergency_wallet_centavos / 100)} / year`
               : "None"}
           </span>
         </p>
