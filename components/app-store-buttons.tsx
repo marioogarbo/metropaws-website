@@ -1,5 +1,4 @@
-const APK_HREF =
-  "https://drive.google.com/uc?export=download&id=1KT2Qi_xCdNsl0njdd54kkzbB9wdHRAto";
+import { APK_HREF } from "@/lib/app-download";
 
 function AndroidIcon() {
   return (

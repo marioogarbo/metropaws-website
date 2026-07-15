@@ -14,6 +14,7 @@ export function SiteHeader() {
     { label: "About", href: "/about" },
     { label: "Founding", href: "/#founding" },
     { label: "Pricing", href: "/#pricing" },
+    { label: "Get the App", href: "/download" },
     { label: "FAQ", href: "/#faq" },
     { label: "Contact Us", href: "/#contact" },
   ] as const;

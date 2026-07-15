@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useDeferredValue } from "react";
+import { useState, useMemo, useDeferredValue, useTransition } from "react";
 import {
   Search,
   Wallet,
@@ -10,9 +10,14 @@ import {
   Hourglass,
   PawPrint,
   AlertTriangle,
+  Send,
+  Loader2,
+  FileText,
 } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { AdminPayment } from "@/app/admin/(protected)/payments/page";
+import { resendInvoiceAction } from "@/app/admin/(protected)/payments/actions";
 
 const STATUS_STYLES: Record<AdminPayment["status"], string> = {
   paid: "bg-[oklch(0.90_0.060_155)] text-[oklch(0.30_0.100_155)] border border-[oklch(0.80_0.080_155)]",
@@ -104,6 +109,70 @@ function FilterTab({
   );
 }
 
+function ReceiptActions({ payment }: { payment: AdminPayment }) {
+  const [isEmailing, startEmailing] = useTransition();
+
+  // Only paid payments have a receipt.
+  if (payment.status !== "paid") {
+    return <span className="text-[oklch(0.78_0.008_258)] text-xs">—</span>;
+  }
+
+  // Opens the PDF inline in a new tab (the browser's PDF viewer offers a
+  // download too). Same-origin, so the httpOnly admin cookie rides along.
+  function handleView() {
+    window.open(`/api/admin/payments/${payment.id}/invoice`, "_blank", "noopener");
+  }
+
+  function handleEmail() {
+    startEmailing(async () => {
+      const result = await resendInvoiceAction(payment.id);
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success(
+        result.email ? `Receipt emailed to ${result.email}` : "Receipt emailed.",
+      );
+    });
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <button
+        type="button"
+        onClick={handleView}
+        title="View / download the receipt PDF"
+        className={cn(
+          "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors",
+          "text-[oklch(0.24_0.055_258)] border border-[oklch(0.90_0.010_258)]",
+          "hover:bg-[oklch(0.94_0.015_75)]",
+        )}
+      >
+        <FileText size={13} />
+        View
+      </button>
+      <button
+        type="button"
+        onClick={handleEmail}
+        disabled={isEmailing}
+        title="Email this receipt to the member again"
+        aria-label="Email receipt to member"
+        className={cn(
+          "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors",
+          "text-[oklch(0.48_0.020_258)] hover:text-[oklch(0.24_0.055_258)] hover:bg-[oklch(0.94_0.015_75)]",
+          "disabled:opacity-60 disabled:cursor-not-allowed",
+        )}
+      >
+        {isEmailing ? (
+          <Loader2 size={13} className="animate-spin" />
+        ) : (
+          <Send size={13} />
+        )}
+      </button>
+    </div>
+  );
+}
+
 function PaymentRow({ payment }: { payment: AdminPayment }) {
   const memberName =
     `${payment.member_first_name} ${payment.member_last_name}`.trim() || "Unknown member";
@@ -170,6 +239,11 @@ function PaymentRow({ payment }: { payment: AdminPayment }) {
         {payment.paid_at && (
           <p className="text-[oklch(0.62_0.012_258)] text-xs mt-0.5">paid</p>
         )}
+      </td>
+
+      {/* Receipt actions */}
+      <td className="px-4 py-3.5">
+        <ReceiptActions payment={payment} />
       </td>
     </tr>
   );
@@ -294,7 +368,7 @@ export function PaymentsTable({
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-[oklch(0.89_0.014_258)] bg-[oklch(0.94_0.013_258)]">
-                  {["Member", "Plan", "Amount", "Status", "PayMongo Ref", "Date"].map(
+                  {["Member", "Plan", "Amount", "Status", "PayMongo Ref", "Date", "Receipt"].map(
                     (heading) => (
                       <th
                         key={heading}

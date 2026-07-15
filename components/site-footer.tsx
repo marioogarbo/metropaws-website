@@ -36,6 +36,7 @@ const navigateLinks = [
   { label: "Home", href: "/" },
   { label: "Plans & Pricing", href: "/#pricing" },
   { label: "Founding 50", href: "/#founding" },
+  { label: "Download App", href: "/download" },
   { label: "FAQ", href: "/#faq" },
   { label: "Register", href: "/register" },
 ];
