@@ -1,4 +1,4 @@
-import { APK_HREF } from "@/lib/app-download";
+import Link from "next/link";
 
 function AndroidIcon() {
   return (
@@ -41,12 +41,10 @@ function PlayStoreIcon() {
 
 function ApkDownloadBadge() {
   return (
-    <a
-      href={APK_HREF}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href="/download"
       className="inline-flex items-center gap-2.5 bg-[oklch(0.18_0.045_258)] border border-white/15 rounded-lg px-4 py-2.5 transition-all duration-200 ease-out hover:border-white/30 hover:bg-[oklch(0.22_0.052_258)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-gold] focus-visible:ring-offset-2 focus-visible:ring-offset-[oklch(0.22_0.052_258)]"
-      aria-label="Download MetroPaws APK for Android"
+      aria-label="Get the MetroPaws app for Android"
     >
       <AndroidIcon />
       <div>
@@ -57,7 +55,7 @@ function ApkDownloadBadge() {
           Android APK
         </div>
       </div>
-    </a>
+    </Link>
   );
 }
 
@@ -106,7 +104,7 @@ export function AppStoreButtons() {
         {/* <AppStoreComingSoon /> */}
       </div>
       <p className="text-[10px] text-white/55 leading-snug max-w-[38ch]">
-        Android: tap the APK then enable &ldquo;Install unknown apps&rdquo; in Settings
+        Android now — quick download with step-by-step install instructions
       </p>
     </div>
   );
