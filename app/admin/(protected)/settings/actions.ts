@@ -21,6 +21,7 @@ export interface AppSettings {
   member_limit: number;
   founding_claimed: number;
   booking_enabled: boolean;
+  direct_provider_payment_enabled: boolean;
 }
 
 const SETTINGS_DEFAULTS: AppSettings = {
@@ -29,6 +30,7 @@ const SETTINGS_DEFAULTS: AppSettings = {
   member_limit: 50,
   founding_claimed: 0,
   booking_enabled: false,
+  direct_provider_payment_enabled: false,
 };
 
 export async function fetchSettingsAction(): Promise<AppSettings> {
@@ -60,7 +62,10 @@ export async function fetchSettingsAction(): Promise<AppSettings> {
       : null;
 
     const mobileConfigData = mobileConfigRes.ok
-      ? ((await mobileConfigRes.json()) as { booking_enabled: boolean })
+      ? ((await mobileConfigRes.json()) as {
+          booking_enabled: boolean;
+          direct_provider_payment_enabled?: boolean;
+        })
       : null;
 
     return {
@@ -71,6 +76,9 @@ export async function fetchSettingsAction(): Promise<AppSettings> {
       founding_claimed: foundingData?.claimed ?? SETTINGS_DEFAULTS.founding_claimed,
       booking_enabled:
         mobileConfigData?.booking_enabled ?? SETTINGS_DEFAULTS.booking_enabled,
+      direct_provider_payment_enabled:
+        mobileConfigData?.direct_provider_payment_enabled ??
+        SETTINGS_DEFAULTS.direct_provider_payment_enabled,
     };
   } catch {
     return SETTINGS_DEFAULTS;
@@ -108,6 +116,27 @@ export async function updateBookingEnabledAction(
     method: "PUT",
     headers: { "Content-Type": "application/json", ...authHeader(token) },
     body: JSON.stringify({ booking_enabled: enabled }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    return { error: (err as { detail?: string })?.detail ?? "Failed to save." };
+  }
+
+  revalidatePath("/admin/settings");
+  return { error: null };
+}
+
+export async function updateDirectProviderPaymentAction(
+  enabled: boolean,
+): Promise<{ error: string | null }> {
+  const token = await getToken();
+  if (!token) return { error: "Not authenticated." };
+
+  const res = await fetch(`${BACKEND_URL}/admin/settings/direct-provider-payment`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...authHeader(token) },
+    body: JSON.stringify({ direct_provider_payment_enabled: enabled }),
   });
 
   if (!res.ok) {

@@ -40,6 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local tooling
-.claude/
+# local / transient tooling (track .claude/settings.json and .claude/skills/ only)
+.claude/settings.local.json
+.claude/worktrees/
 .impeccable/
+.archive/
+.critique-temp.md
+.impeccablecritiquebody-tmp.md

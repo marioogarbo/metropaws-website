@@ -86,19 +86,26 @@ function peso(centavos: number) {
   }).format(centavos / 100);
 }
 
-function payoutText(m: AdminReimbursement["member"]): string | null {
-  if (!m.payout_method) return null;
-  if (m.payout_method === "cash") {
-    return ["Cash pickup at clinic", m.payout_account_name].filter(Boolean).join(" · ");
+interface PayoutShaped {
+  payout_method: string | null;
+  payout_bank_name?: string | null;
+  payout_account_name?: string | null;
+  payout_account_number?: string | null;
+}
+
+function formatPayout(target: PayoutShaped, cashLabel = "Cash"): string | null {
+  if (!target.payout_method) return null;
+  if (target.payout_method === "cash") {
+    return [cashLabel, target.payout_account_name].filter(Boolean).join(" · ");
   }
-  if (!m.payout_account_number) return null;
+  if (!target.payout_account_number) return null;
   const label =
-    m.payout_method === "gcash"
+    target.payout_method === "gcash"
       ? "GCash"
-      : m.payout_method === "bank"
+      : target.payout_method === "bank"
         ? "Bank"
-        : m.payout_method;
-  return [label, m.payout_bank_name, m.payout_account_name, m.payout_account_number]
+        : target.payout_method;
+  return [label, target.payout_bank_name, target.payout_account_name, target.payout_account_number]
     .filter(Boolean)
     .join(" · ");
 }
@@ -309,6 +316,11 @@ function ClaimRowBase({ claim }: { claim: AdminReimbursement }) {
           <p className="text-[oklch(0.62_0.012_258)] text-xs mt-0.5">
             {claim.provider_name}
           </p>
+          {claim.payout_target === "provider" && (
+            <span className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide bg-[oklch(0.93_0.040_155)] text-[oklch(0.35_0.090_155)]">
+              <Banknote size={9} /> Pay provider directly
+            </span>
+          )}
         </td>
 
         {/* Amount */}
@@ -363,13 +375,32 @@ function ClaimRowBase({ claim }: { claim: AdminReimbursement }) {
               <div className="space-y-4">
                 <ReceiptPreview url={claim.receipt_url} />
                 <DetailRow label="Member email" icon={<Mail size={12} />} value={claim.member.email ?? "—"} />
-                {payoutText(claim.member) ? (
+                {claim.payout_target === "provider" ? (
+                  claim.provider && formatPayout(claim.provider, "Cash") ? (
+                    <div className="rounded-lg border border-[oklch(0.85_0.060_155)] bg-[oklch(0.96_0.030_155)] px-3 py-2.5">
+                      <p className="flex items-center gap-1.5 text-[oklch(0.35_0.070_155)] text-xs font-semibold uppercase tracking-wider mb-1">
+                        <Banknote size={12} /> Pay provider directly
+                      </p>
+                      <p className="text-[oklch(0.24_0.055_258)] text-sm font-medium">
+                        {claim.provider.name} — {formatPayout(claim.provider, "Cash")}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg border border-[oklch(0.87_0.050_25)] bg-[oklch(0.96_0.020_25)] px-3 py-2.5">
+                      <p className="flex items-center gap-1.5 text-[oklch(0.45_0.090_25)] text-xs font-medium">
+                        <Banknote size={12} /> No payout details on file for{" "}
+                        {claim.provider?.name ?? "this provider"} — add them on the Providers
+                        page before marking paid.
+                      </p>
+                    </div>
+                  )
+                ) : formatPayout(claim.member, "Cash pickup at clinic") ? (
                   <div className="rounded-lg border border-[oklch(0.85_0.060_155)] bg-[oklch(0.96_0.030_155)] px-3 py-2.5">
                     <p className="flex items-center gap-1.5 text-[oklch(0.35_0.070_155)] text-xs font-semibold uppercase tracking-wider mb-1">
                       <Banknote size={12} /> Send payout to
                     </p>
                     <p className="text-[oklch(0.24_0.055_258)] text-sm font-medium">
-                      {payoutText(claim.member)}
+                      {formatPayout(claim.member, "Cash pickup at clinic")}
                     </p>
                   </div>
                 ) : (

@@ -8,6 +8,7 @@ import {
   updatePaymentGateAction,
   updateFounding50Action,
   updateBookingEnabledAction,
+  updateDirectProviderPaymentAction,
   type AppSettings,
 } from "@/app/admin/(protected)/settings/actions";
 
@@ -164,6 +165,23 @@ export function SettingsPanel({ initialSettings }: SettingsPanelProps) {
     });
   }
 
+  function saveDirectProviderPayment(value: boolean) {
+    const previous = settings;
+    setSettings((s) => ({ ...s, direct_provider_payment_enabled: value }));
+    setPendingKey("direct_provider_payment_enabled");
+
+    startTransition(async () => {
+      const result = await updateDirectProviderPaymentAction(value);
+      setPendingKey(null);
+      if (result.error) {
+        setSettings(previous);
+        toast.error(result.error);
+      } else {
+        toast.success("Setting saved.");
+      }
+    });
+  }
+
   function saveMemberLimit() {
     const parsed = parseInt(memberLimitInput, 10);
     if (isNaN(parsed) || parsed < 1) {
@@ -247,7 +265,6 @@ export function SettingsPanel({ initialSettings }: SettingsPanelProps) {
         <SettingRow
           label="Booking Tab"
           description="When ON, members see the Book tab and can request clinic visits. Kept OFF while there are no partner clinics — the app shows the Events tab instead. Flipping this updates every member's app without a Play Store release."
-          last
         >
           <div className="flex items-center gap-2">
             <div className="w-4 flex items-center justify-center">
@@ -263,6 +280,29 @@ export function SettingsPanel({ initialSettings }: SettingsPanelProps) {
               onChange={saveBookingEnabled}
               disabled={isPending}
               label="Booking Tab"
+            />
+          </div>
+        </SettingRow>
+
+        <SettingRow
+          label="Direct-to-Provider Payments"
+          description="When ON, members can ask MetroPaws to pay the clinic/groomer directly instead of reimbursing themselves, for scheduled non-emergency services only. Requires providers to be added first on the Providers page."
+          last
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-4 flex items-center justify-center">
+              {pendingKey === "direct_provider_payment_enabled" && (
+                <Loader2
+                  size={12}
+                  className="animate-spin text-[oklch(0.48_0.020_258)]"
+                />
+              )}
+            </div>
+            <Toggle
+              checked={settings.direct_provider_payment_enabled}
+              onChange={saveDirectProviderPayment}
+              disabled={isPending}
+              label="Direct-to-Provider Payments"
             />
           </div>
         </SettingRow>

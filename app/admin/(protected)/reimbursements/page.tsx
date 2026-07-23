@@ -41,6 +41,20 @@ export interface ReimbursementPet {
   plan_type: string | null;
 }
 
+export interface ReimbursementProviderDetail {
+  id: string;
+  name: string;
+  category: string | null;
+  phone: string | null;
+  address: string | null;
+  payout_method: string | null;
+  payout_account_name: string | null;
+  payout_account_number: string | null;
+  payout_bank_name: string | null;
+  is_active: boolean;
+  created_at: string;
+}
+
 export type ReimbursementStatus =
   | "pending"
   | "under_review"
@@ -48,6 +62,8 @@ export type ReimbursementStatus =
   | "approved"
   | "rejected"
   | "paid";
+
+export type PayoutTarget = "member" | "provider";
 
 export interface AdminReimbursement {
   id: string;
@@ -65,9 +81,12 @@ export interface AdminReimbursement {
   reviewed_at: string | null;
   paid_at: string | null;
   paid_reference: string | null;
+  payout_target: PayoutTarget;
+  provider_id: string | null;
   created_at: string;
   member: ReimbursementMember;
   pet: ReimbursementPet;
+  provider: ReimbursementProviderDetail | null;
   events: ReimbursementEvent[];
 }
 

@@ -80,11 +80,11 @@ export default async function AdminPromosPage() {
         <div className="flex items-center gap-2 mb-1.5">
           <Megaphone size={15} className="text-[oklch(0.48_0.020_258)]" />
           <p className="text-sm text-[oklch(0.48_0.020_258)] font-semibold uppercase tracking-widest">
-            Promos
+            Promos &amp; Events
           </p>
         </div>
         <h1 className="text-2xl font-bold text-[oklch(0.24_0.055_258)] tracking-tight">
-          Events &amp; Promos
+          Promos &amp; Events
         </h1>
         <p className="text-sm text-[oklch(0.48_0.020_258)] mt-2">
           What members see on the app&apos;s Events tab — club events and member promos.
