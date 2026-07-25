@@ -66,6 +66,27 @@
   --color-silver-edge: oklch(0.62 0.012 258);
   --color-silver-ink: oklch(0.34 0.018 258);
 
+  /* Legacy token aliases — the auth pages (forgot/reset-password), Nav, Footer,
+     PricingSection, etc. were written against the older/mobile token names.
+     Those names were undefined here, so `var(--navy)` etc. resolved to nothing
+     (e.g. the reset-password submit button rendered white-on-white = invisible,
+     body text lost its color). Alias them onto the real brand tokens. */
+  --navy: var(--color-navy);
+  --navy-mid: var(--color-navy-mid);
+  --navy-dark: oklch(0.2 0.05 258);
+  --navy-deep: oklch(0.17 0.045 258);
+  --navy-light: oklch(0.95 0.012 258);
+  --gold: var(--color-gold);
+  --gold-muted: var(--color-gold-muted);
+  --gold-dark: oklch(0.52 0.08 82);
+  --gold-light: oklch(0.94 0.035 85);
+  --surface: var(--color-surface);
+  --text: var(--color-ink);
+  --grey: var(--color-ink-muted);
+  --grey-light: var(--color-silver-hi);
+  --error: var(--color-destructive);
+  --error-light: oklch(0.95 0.04 25);
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);

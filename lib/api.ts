@@ -1,7 +1,10 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Prod backend is the default so a deployed build never silently falls back to
+// localhost (which made the reset-password POST fail with no response). For a
+// local backend, set NEXT_PUBLIC_API_URL=http://localhost:8000 in .env.local.
+const BASE = process.env.NEXT_PUBLIC_API_URL || 'https://metropaws-backend.onrender.com';
 const COOKIE_OPTS: Cookies.CookieAttributes = { path: '/', sameSite: 'lax', expires: 7 };
 
 export const api = axios.create({ baseURL: BASE });
