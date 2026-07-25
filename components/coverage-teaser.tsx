@@ -12,7 +12,7 @@ const pillars = [
     icon: ReceiptText,
     label: "Use Any Provider",
     detail:
-      "Keep your trusted vet. Pay, upload the receipt, and get reimbursed to your Benefit Wallet.",
+      "Keep your trusted vet. Request a scheduled visit and we pay the provider directly — or pay yourself and get reimbursed.",
   },
   {
     icon: Users,

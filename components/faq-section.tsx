@@ -17,9 +17,9 @@ const FALLBACK_FAQS: Faq[] = [
   },
   {
     id: "fallback-2",
-    question: "How do claims and reimbursements work?",
+    question: "How do payments and claims work?",
     answer:
-      "Visit any clinic or groomer, pay them directly, then upload your receipt in the app. We check it against your plan and benefit balance, and approved wellness benefits are reimbursed to your Benefit Wallet.",
+      "For a scheduled visit — grooming, vaccination, a check-up — request it in the app before you go and we pay the provider directly, so you skip the out-of-pocket. Prefer to pay yourself, or it is an emergency? Pay the provider, upload the receipt, and we reimburse you to your GCash or bank. Either way, the app tracks your annual benefit to the peso.",
     sort_order: 1,
     is_published: true,
   },

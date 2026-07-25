@@ -3,21 +3,21 @@ import { MapPin, ReceiptText, Wallet } from "lucide-react";
 const steps = [
   {
     icon: MapPin,
-    title: "Visit any clinic or groomer",
+    title: "Choose your provider",
     detail:
-      "Stay with the vet your pet already trusts, or pick a MetroPaws partner for added perks. No switching, no lock-in.",
+      "Stay with the vet or groomer your pet already trusts, or pick a MetroPaws partner for added perks. No switching, no lock-in.",
   },
   {
     icon: ReceiptText,
-    title: "Pay and upload your receipt",
+    title: "Request it in the app",
     detail:
-      "Settle the bill as usual, then snap the receipt in the app. Our team reviews it against your plan and benefit balance — usually within a few days.",
+      "For a scheduled visit, send the details before you go and we pay the provider directly — no out-of-pocket. Or pay yourself and snap the receipt.",
   },
   {
     icon: Wallet,
-    title: "Get paid back offline",
+    title: "We settle it, you stay covered",
     detail:
-      "Once approved, your reimbursement is sent directly to your GCash or bank account. The app tracks how much of your annual benefit you've used.",
+      "We pay the provider directly, or reimburse you to your GCash or bank. Either way, the app tracks your annual benefit to the peso.",
   },
 ];
 
@@ -43,12 +43,12 @@ export function HowItWorksSection() {
             id="how-it-works-heading"
             className="mt-3 text-3xl md:text-5xl font-bold text-(--color-navy) tracking-tight leading-tight text-balance"
           >
-            Pay your provider. We pay you back.
+            We pay your provider directly.
           </h2>
           <p className="mt-4 text-sm text-(--color-ink-muted) leading-relaxed max-w-[58ch]">
-            MetroPaws is a membership, not a discount card. Use your benefits at any
-            provider, upload the receipt, and we send your reimbursement to your GCash or
-            bank.
+            MetroPaws is a membership, not a discount card. For scheduled visits we settle
+            the bill straight with your provider — so you skip the out-of-pocket. Paid
+            something yourself? Upload the receipt and we reimburse you.
           </p>
         </div>
 
@@ -87,8 +87,8 @@ export function HowItWorksSection() {
                 Your annual benefit, tracked to the peso
               </h3>
               <p className="mt-3 text-sm text-white/60 leading-relaxed">
-                See what you've claimed, what's pending review, and how much remains — so
-                you always know what's left before your next visit.
+                See what is covered, what is pending, and how much remains — whether we
+                paid the provider or reimbursed you. No guessing before your next visit.
               </p>
             </div>
 
