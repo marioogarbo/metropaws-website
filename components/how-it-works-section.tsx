@@ -11,13 +11,13 @@ const steps = [
     icon: ReceiptText,
     title: "Pay and upload your receipt",
     detail:
-      "Settle the bill as usual, then snap the receipt in the app. We check it against your plan and benefit balance.",
+      "Settle the bill as usual, then snap the receipt in the app. Our team reviews it against your plan and benefit balance — usually within a few days.",
   },
   {
     icon: Wallet,
-    title: "Get reimbursed to your wallet",
+    title: "Get paid back offline",
     detail:
-      "Approved wellness benefits and cashback return to your Benefit Wallet, tracked to the peso so you always know what is left.",
+      "Once approved, your reimbursement is sent directly to your GCash or bank account. The app tracks how much of your annual benefit you've used.",
   },
 ];
 
@@ -46,8 +46,9 @@ export function HowItWorksSection() {
             Pay your provider. We pay you back.
           </h2>
           <p className="mt-4 text-sm text-(--color-ink-muted) leading-relaxed max-w-[58ch]">
-            MetroPaws is a membership, not a discount card. Use your benefits at
-            any provider, keep the receipt, and let the app handle the rest.
+            MetroPaws is a membership, not a discount card. Use your benefits at any
+            provider, upload the receipt, and we send your reimbursement to your GCash or
+            bank.
           </p>
         </div>
 
@@ -58,10 +59,7 @@ export function HowItWorksSection() {
                 <span className="text-xl font-bold text-(--color-gold) tabular-nums">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <span
-                  aria-hidden="true"
-                  className="h-px flex-1 bg-(--color-ink-faint)"
-                />
+                <span aria-hidden="true" className="h-px flex-1 bg-(--color-ink-faint)" />
                 <Icon
                   className="w-5 h-5 text-(--color-navy)"
                   strokeWidth={2}
@@ -86,11 +84,11 @@ export function HowItWorksSection() {
                 Benefit Wallet
               </p>
               <h3 className="mt-3 text-xl font-bold text-white leading-tight">
-                Every benefit, tracked in one place
+                Your annual benefit, tracked to the peso
               </h3>
               <p className="mt-3 text-sm text-white/60 leading-relaxed">
-                See what is available, pending, and used across the year. No
-                guessing what is covered before your next visit.
+                See what you've claimed, what's pending review, and how much remains — so
+                you always know what's left before your next visit.
               </p>
             </div>
 
@@ -98,9 +96,7 @@ export function HowItWorksSection() {
               {walletRows.map(({ label, used }) => (
                 <div key={label}>
                   <div className="flex items-baseline justify-between gap-4">
-                    <span className="text-sm font-medium text-white">
-                      {label}
-                    </span>
+                    <span className="text-sm font-medium text-white">{label}</span>
                     <span className="text-sm text-(--color-gold-muted) tabular-nums">
                       {used}% used
                     </span>
