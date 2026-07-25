@@ -44,9 +44,11 @@ export default function ResetContent() {
     try {
       await resetPassword(token!, newPassword);
       setSuccess(true);
-      setTimeout(() => {
-        router.push("/admin/login?reset=success");
-      }, 2000);
+      // No auto-redirect: password reset is used mainly by members (via the
+      // mobile app), who have no account on this website. Sending them to
+      // /admin/login funnelled anyone with an existing admin session straight
+      // into the admin dashboard. Show a success message instead and let them
+      // return to the app; admins get an explicit staff-portal link below.
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ||
@@ -109,10 +111,20 @@ export default function ResetContent() {
                     <span className="text-3xl">✓</span>
                   </div>
                   <h1 className="font-(family-name:--font-baloo2) text-3xl font-bold text-(--text) mb-2">
-                    Password Reset
+                    Password updated
                   </h1>
                   <p className="text-(--grey) text-base mb-8">
-                    Your password has been updated successfully. Redirecting to sign in...
+                    Your password has been changed successfully. Open the
+                    MetroPaws app and sign in with your new password.
+                  </p>
+                  <p className="text-(--grey) text-sm">
+                    MetroPaws staff?{" "}
+                    <Link
+                      href="/admin/login"
+                      className="text-(--navy) font-bold hover:underline"
+                    >
+                      Sign in to the staff portal
+                    </Link>
                   </p>
                 </div>
               </>
