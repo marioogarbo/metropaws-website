@@ -1,11 +1,17 @@
 /**
- * Single source of truth for the direct Android APK download.
+ * Single source of truth for the two ways a member can install the Android app.
  *
- * The Play Store listing is still in review, so members install the app
- * directly from the website in the meantime. Update these three values
- * every time a new APK is uploaded so the badge, the /download page, and
- * the version label never drift from the actual file.
+ * Google Play carries the reviewed, auto-updating release. The direct APK runs
+ * ahead of it while newer builds wait on a Play release, so both routes stay
+ * offered. Update these values every time a new APK is uploaded so the badge,
+ * the /download page, and the version label never drift from the actual file.
  */
+
+// Live Google Play listing. The plain HTTPS form deep-links into the Play Store
+// app on Android and falls back to the web listing on desktop — unlike
+// market:// which breaks outside Android.
+export const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.metropaws.mobile";
 
 // Direct-download link to the current release APK.
 // Hosted on Google Drive (uc?export=download forces a file download rather
@@ -15,7 +21,9 @@ export const APK_HREF =
   "https://drive.google.com/uc?export=download&id=1KT2Qi_xCdNsl0njdd54kkzbB9wdHRAto";
 
 // Marketing version of the uploaded APK — keep in sync with mobile pubspec.yaml.
-export const APK_VERSION = "1.3.1";
+// Bumping this without replacing the file behind APK_HREF makes the site
+// advertise a version it doesn't actually serve: upload first, then bump.
+export const APK_VERSION = "1.4.0";
 
 // Conservative floor so we never wrongly tell an eligible member their phone
 // is too old. Essentially every active Android device meets this.
