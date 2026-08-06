@@ -1,5 +1,9 @@
 import type { Plan } from "@/types/plan";
 import { PricingCards } from "@/components/pricing-cards";
+import {
+  PUBLIC_CONTENT_REVALIDATE_SECONDS,
+  PUBLIC_CONTENT_TIMEOUT_MS,
+} from "@/lib/public-content";
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL ?? "https://metropaws-backend.onrender.com";
@@ -13,8 +17,8 @@ const FALLBACK_PLANS: Plan[] = [
     tagline: "Smart Pet Parenting Starts Here",
     features: [
       "Digital Pet Passport",
-      "₱2,000 Preventive Wellness Wallet",
-      "₱300 Emergency Wallet",
+      "₱2,000 Preventive Wellness Benefit",
+      "₱300 Emergency Benefit",
       "Paw Points Rewards",
       "Wellness Reminders",
       "Community Access",
@@ -31,8 +35,8 @@ const FALLBACK_PLANS: Plan[] = [
     tagline: "More Care. More Flexibility. More Value.",
     features: [
       "Everything in Standard",
-      "₱4,000 Preventive Wellness Wallet",
-      "₱900 Emergency Wallet",
+      "₱4,000 Preventive Wellness Benefit",
+      "₱900 Emergency Benefit",
       "Higher Paw Points earning",
       "Priority member processing",
       "Member promos and event access",
@@ -49,8 +53,8 @@ const FALLBACK_PLANS: Plan[] = [
     tagline: "Premier Pet Wellness Experience",
     features: [
       "Everything in Deluxe",
-      "₱7,000 Preventive Wellness Wallet",
-      "₱1,500 Emergency Wallet",
+      "₱7,000 Preventive Wellness Benefit",
+      "₱1,500 Emergency Benefit",
       "Highest Paw Points earning",
       "VIP community access",
       "Concierge-style member support",
@@ -65,7 +69,8 @@ const FALLBACK_PLANS: Plan[] = [
 async function fetchPlans(): Promise<Plan[]> {
   try {
     const response = await fetch(`${BACKEND_URL}/plans`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: PUBLIC_CONTENT_REVALIDATE_SECONDS },
+      signal: AbortSignal.timeout(PUBLIC_CONTENT_TIMEOUT_MS),
     });
     if (!response.ok) {
       return FALLBACK_PLANS;
