@@ -54,6 +54,19 @@
   --color-navy-mid: oklch(0.32 0.05 258);
   --color-gold: oklch(0.72 0.115 82);
   --color-gold-muted: oklch(0.65 0.09 82);
+  /* Gold dark enough to carry small light text. --color-gold behind navy text
+     is 3.52:1, which passes for a 14px-semibold CTA (large text) but fails the
+     4.5:1 body floor at badge sizes. This pairs with cream at 12.5:1. */
+  --color-gold-deep: oklch(0.52 0.08 82);
+  /* Washes of the brand gold, for marking a row as a MetroPaws Partner
+     without a side-stripe. -hover is the same wash under pointer/focus. */
+  --color-gold-wash: oklch(0.72 0.115 82 / 0.07);
+  --color-gold-wash-hover: oklch(0.72 0.115 82 / 0.13);
+  /* The same wash mechanic in navy, for the service mark that opens each
+     directory row. A tint rather than a new hue: the palette is committed to
+     navy and gold, and four coloured icon tiles would be a fifth decision. */
+  --color-navy-wash: oklch(0.24 0.055 258 / 0.09);
+  --color-navy-wash-hover: oklch(0.24 0.055 258 / 0.15);
   --color-cream: oklch(0.97 0.01 80);
   --color-cream-warm: oklch(0.94 0.015 75);
   --color-ink: oklch(0.2 0.03 258);
@@ -185,6 +198,37 @@
 
   @media (prefers-reduced-motion: reduce) {
     .mp-rise {
+      animation-duration: 1ms;
+      animation-delay: 0ms !important;
+    }
+  }
+
+  /*
+    Directory list settling after a filter changes.
+
+    Shorter and shallower than mp-rise: this fires when someone taps a filter
+    chip, not once on arrival, so it has to acknowledge the change and get out
+    of the way. Deliberately NOT bound to typing in the search box, where a
+    per-keystroke replay would strobe. The stagger is capped in the component so
+    the last row is never held back more than ~160ms.
+  */
+  @keyframes mp-settle {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .mp-settle {
+    animation: mp-settle 190ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mp-settle {
       animation-duration: 1ms;
       animation-delay: 0ms !important;
     }
